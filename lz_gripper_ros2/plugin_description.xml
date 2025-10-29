@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<library path="lz_gripper_rviz_plugin">
+  <class
+    name="lz_gripper_ros2/GripperDisplay"
+    type="lz_gripper_ros2::GripperDisplay"
+    base_class_type="rviz_common::Display">
+    <description>
+      显示LZ机械手的实时状态，包括手指位置和压力信息。
+    </description>
+    <message_type>lz_gripper_ros2/msg/GripperState</message_type>
+  </class>
+</library> 

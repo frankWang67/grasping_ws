@@ -1,0 +1,103 @@
+bodex_folder: "sim_lz_gripper"
+
+# hand kinematics
+kinematics:
+
+  # models
+  urdf_path: "assets/lz_gripper/lz_gripper_body.urdf"
+  xml_path: "assets/lz_gripper/lz_gripper_floating_wrist.xml"
+  valid_result_path: "output/sim_lz_gripper/tabletop/valid_result"
+
+  joint_name_pattern: '\w+_joint\w'
+  actuator_name_pattern: '\w+_actuator\w*'
+
+  # fingertip link names
+  root_link: "base_link"
+  link_names: ["thumb_tip", "index_tip", "middle_tip", "ring_tip", "little_tip"]
+  # remove the wrist links (i.e., shadow hand)
+  wrist_links: []
+  wrist_joints: []
+
+  # joint names
+  joint_names: [
+    "thumb_joint1", "thumb_joint2", "thumb_joint3",
+    "index_joint1", "index_joint2",
+    "middle_joint1", "middle_joint2",
+    "ring_joint1", "ring_joint2",
+    "little_joint1", "little_joint2",
+  ] # List[str]
+
+  # actuator names and ratios
+  actuator_to_joint_ratio: {
+    "thumb_bend": {"thumb_joint1": 1.0},
+    "thumb_flex": {"thumb_joint2": 4.4857, "thumb_joint3": 1.0},
+    "index_flex": {"index_joint1": 1.0, "index_joint2": 1.0},
+    "middle_flex": {"middle_joint1": 1.0, "middle_joint2": 1.0},
+    "ring_flex": {"ring_joint1": 1.0, "ring_joint2": 1.0},
+    "little_flex": {"little_joint1": 1.0, "little_joint2": 1.0},
+  }
+  
+  # grasp template
+  template: "config/grasp_template/lz_gripper.yaml"
+
+grasp_cfg:
+  ge_param:
+    type: 'qp_base'
+    miu_coef: [0.1, 0]
+    solver_type: 'batch_reluqp'
+    k_lower: 0.2
+    pressure_constraints:   # [contact_id_list, lower]
+      [[[0, 1, 2, 3, 4], 1.0],
+        # [[0, 1, 2], 0.4], 
+        # [[4], 0.5], 
+      ]
+    enable_density: False
+    solve_interval: 5
+
+rnd_seed: 0
+batch_size: 2
+num_trials_per_object: 100
+# object_scale: [0.05, 0.08, 0.11, 0.14, 0.17, 0.20]
+object_scale: [0.08]
+
+optimization:
+  lr: 0.05
+  k_point: 1.0
+  k_normal: 0.1
+  max_iter: 100
+
+criterion:
+  max_opt_energy: 0.25
+  max_grasp_quality: 0.1
+
+# local refinement stage
+simulation:
+  backend: 'mujoco_rollout'
+  type: 'tabletop'  # include a table geom for 'tabletop'
+  timestep: 0.001  # mujoco timestep
+  steps: 300      # number of rollout steps
+  render:
+    render_every: 2        # render every n rollouts
+    max_render_envs: 64   # maximum number of envs to render
+  state_dims:
+    # start_idx, length
+    time: [0, 1]
+    wrist_pose: [1, 6]
+    joint_pos: [7, 11]
+    object_pose: [18, 7]
+  controller:
+    type: 'virtual_force'
+    # output: 'torque'  # 'torque' or 'position', set accord. to the XML in the main func
+    k_f: 200.0
+  default:
+    gravity: [0.0, 0.0, -9.81]
+    friction: [5.0, 0.2, 0.001]
+    solimp: [0.5, 0.99, 0.0001]
+    solref: [0.005, 1]
+    density: 200.0  # object density
+
+# validation stage
+validation:
+  k_f: 20
+  object_pose_diff_threshold: 0.02 # threshold for pose diff to consider the grasp as stable
+  palm_lift: 0.1  # lift the palm to validate tabletop grasp

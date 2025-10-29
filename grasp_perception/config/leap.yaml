@@ -1,0 +1,91 @@
+bodex_folder: "sim_leap"
+
+# hand kinematics
+kinematics:
+
+  # models
+  urdf_path: "assets/leap_hand/leap_hand_original.urdf"
+  xml_path: "assets/leap_hand/leap_hand_floating_wrist.xml"
+  valid_result_path: "output/sim_leap/tabletop/valid_result"
+
+  joint_name_pattern: '\w+_joint\w'
+  actuator_name_pattern: '\w+_actuator\w*'
+
+  # fingertip link names
+  root_link: "palm_lower"
+  link_names: []
+  # remove the wrist links (i.e., shadow hand)
+  wrist_links: []
+  wrist_joints: []
+  # joint names
+  joint_names: [
+    "joint_1", "joint_0", "joint_2", "joint_3",
+    "joint_5", "joint_4", "joint_6", "joint_7",
+    "joint_9", "joint_8", "joint_10", "joint_11",
+    "joint_12", "joint_13", "joint_14", "joint_15",
+  ] # List[str]
+  
+  # grasp template
+  template: "config/grasp_template/leap.yaml"
+
+grasp_cfg:
+  ge_param:
+    type: 'qp_base'
+    miu_coef: [0.1, 0]
+    solver_type: 'batch_reluqp'
+    k_lower: 0.2
+    pressure_constraints:   # [contact_id_list, lower]
+      [[[0, 1, 2, 3], 1.0],
+        [[0, 1], 0.4], 
+        [[3], 0.5], 
+      ]
+    enable_density: False
+    solve_interval: 5
+
+rnd_seed: 0
+batch_size: 2
+num_trials_per_object: 100
+# object_scale: [0.05, 0.08, 0.11, 0.14, 0.17, 0.20]
+object_scale: [0.08]
+
+optimization:
+  lr: 0.05
+  k_point: 1.0
+  k_normal: 0.1
+  max_iter: 100
+
+criterion:
+  max_opt_energy: 0.25
+  max_grasp_quality: 0.1
+
+# local refinement stage
+simulation:
+  backend: 'mujoco_rollout'
+  type: 'tabletop'  # include a table geom for 'tabletop'
+  timestep: 0.001  # mujoco timestep
+  steps: 300      # number of rollout steps
+  render:
+    render_every: 2        # render every n rollouts
+    max_render_envs: 64   # maximum number of envs to render
+  state_dims:
+    # start_idx, length
+    time: [0, 1]
+    wrist_pose: [1, 6]
+    joint_pos: [7, 11]
+    object_pose: [18, 7]
+  controller:
+    type: 'virtual_force'
+    # output: 'torque'  # 'torque' or 'position', set accord. to the XML in the main func
+    k_f: 200.0
+  default:
+    gravity: [0.0, 0.0, -9.81]
+    friction: [5.0, 0.2, 0.001]
+    solimp: [0.5, 0.99, 0.0001]
+    solref: [0.005, 1]
+    density: 200.0  # object density
+
+# validation stage
+validation:
+  k_f: 20
+  object_pose_diff_threshold: 0.02 # threshold for pose diff to consider the grasp as stable
+  palm_lift: 0.1  # lift the palm to validate tabletop grasp

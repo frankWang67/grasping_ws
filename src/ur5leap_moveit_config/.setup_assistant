@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: ur_irm_grasp
+    relative_path: assets/ur5_leap_classic/ur5_leap_classic.urdf
+  srdf:
+    relative_path: config/ur5_leap_classic.srdf
+  package_settings:
+    author_name: wshf
+    author_email: wshf21@mails.tsinghua.edu.cn
+    generated_timestamp: 1758944628
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

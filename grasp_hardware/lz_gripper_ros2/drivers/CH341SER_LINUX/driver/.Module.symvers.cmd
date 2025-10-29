@@ -1,1 +1,0 @@
-savedcmd_/home/lz_/ros2_ws/CH341SER_LINUX/driver/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /home/lz_/ros2_ws/CH341SER_LINUX/driver/Module.symvers -T /home/lz_/ros2_ws/CH341SER_LINUX/driver/modules.order -i Module.symvers -e 

@@ -1,0 +1,1 @@
+savedcmd_/home/lz_/ros2_ws/CH341SER_LINUX/driver/ch341.ko := ld -r -m elf_x86_64 -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/lz_/ros2_ws/CH341SER_LINUX/driver/ch341.ko /home/lz_/ros2_ws/CH341SER_LINUX/driver/ch341.o /home/lz_/ros2_ws/CH341SER_LINUX/driver/ch341.mod.o

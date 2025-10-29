@@ -1,0 +1,11 @@
+uint8 id
+int32 delay
+float32[6] floatdata
+uint8 messageid
+uint8 flag
+---
+uint8 okflag
+uint16[5] pressure
+uint16[6] velocity
+uint16[6] effort
+uint8  responseid

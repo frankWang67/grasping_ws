@@ -1,0 +1,14 @@
+# Goal: 动作目标参数
+int32 command_type     # 1=位置控制, 3=速度控制, 4=力矩控制
+int32 hand_id         # 1=右手, 2=左手
+int32 flag            # 0=正常模式
+float32[] data        # 控制数据 [类型,手ID,标志,延时,6个手指数据]
+---
+# Result: 动作执行结果
+bool success          # 执行是否成功
+string message       # 结果描述
+float32[] pressures  # 最终压力值
+---
+# Feedback: 动作执行过程中的反馈
+float32[] pressures  # 当前压力值
+float32 completion   # 完成百分比 
